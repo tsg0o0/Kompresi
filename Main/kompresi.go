@@ -318,6 +318,9 @@ func jpegCompress(inputFile string) {
 		fmt.Println("\x1b[33mFailed. (by guetzli): ", exeerr, "\x1b[0m")
 	}else{
 		//Success
+		if config.DeleteOrigin == true {
+			os.Remove(inputFile)
+		}
 		resultInfo, _ := os.Stat(inputFile)
 		fmt.Println("\x1b[32mSuccess. (by guetzli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())
