@@ -24,6 +24,7 @@ type Config struct {
     //0-Low 2-High
 }
 var config Config
+var alreadyDetectedPaths = make(map[string]bool)
 
 func main() {
 	exedir, err := os.Executable()
@@ -159,8 +160,12 @@ func watchDir(watcher *fsnotify.Watcher, path string) {
                 if err == nil && fi.IsDir() {
                     fmt.Println("New dir detect:", event.Name)
                     go watchDir(watcher, event.Name)
+                    bootWatcherFunc()
                 }else{
-                	imgCatch(event.Name)
+                	if !alreadyDetectedPaths[event.Name] {
+						alreadyDetectedPaths[event.Name] = true
+                		imgCatch(event.Name)
+                	}
                 }
             }
             
@@ -179,12 +184,29 @@ func bootResearch(rootDir string) ([]string, error) {
 		if err != nil {
 			return err
 		}
+		
 		if !info.IsDir() {
 			paths = append(paths, path)
 		}
+
+		alreadyDetectedPaths[path] = true
+		
 		return nil
 	})
 	return paths, err
+}
+
+func bootWatcherFunc() {
+	//Boot Research
+	filePaths, err := bootResearch(config.InputDir)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, path := range filePaths {
+		if !alreadyDetectedPaths[path] {
+			imgCatch(path)
+		}
+	}
 }
 
 
@@ -197,16 +219,8 @@ func watcherDaemon() {
 	}
 	defer watcher.Close()
 	
-	//Boot Research
-	filePaths, err := bootResearch(config.InputDir)
-	if err != nil {
-		fmt.Println(err)
-	}
-	for _, path := range filePaths {
-		imgCatch(path)
-	}
-
-
+	bootWatcherFunc()
+	
 	err = filepath.Walk(config.InputDir, func(path string, info os.FileInfo, err error) error {
         if err != nil {
             return err
