@@ -58,6 +58,7 @@ func main() {
 		loadConfig()
 		
 	}else if len(arg) > 2 {
+		loadConfig()
 		//Edit config
 		if arg[1] == "inputDir" {
 			if arg[2] == config.OutputDir {
