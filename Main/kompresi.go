@@ -156,6 +156,10 @@ func loadConfig() {
 			fmt.Println("\n\x1b[35mPlease change the settings and try again.\x1b[0m")
 			os.Exit(1)
 		}
+		if config.InputDir == config.OutputDir {
+			fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
+			os.Exit(1)
+		}
 }
 
 func imgCatch(inputFile string) {
