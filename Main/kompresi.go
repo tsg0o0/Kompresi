@@ -55,10 +55,9 @@ func main() {
 	if len(arg) == 1 {
 		//Run daemon
 		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
-		loadConfig()
-		
+		loadConfig(false)
 	}else if len(arg) > 2 {
-		loadConfig()
+		loadConfig(true)
 		//Edit config
 		if arg[1] == "inputDir" {
 			if arg[2] == config.OutputDir {
@@ -144,7 +143,7 @@ func loadConfig() {
 		fmt.Println("Output directory:", config.OutputDir)
 		fmt.Println("Delete original files:", config.DeleteOrigin)
 		
-		if config.InputDir == "" && config.OutputDir == "" {
+		if config.InputDir == "" && config.OutputDir == "" && ignore == false {
 			fmt.Println("\n\x1b[35m==Complete the setup!==\x1b[0m")
 			fmt.Println("Use the following command or rewrite the JSON file directly to complete the setup.")
 			fmt.Println("\nCommand:")
@@ -157,7 +156,7 @@ func loadConfig() {
 			fmt.Println("\n\x1b[35mPlease change the settings and try again.\x1b[0m")
 			os.Exit(1)
 		}
-		if config.InputDir == config.OutputDir {
+		if config.InputDir == config.OutputDir && ignore == false {
 			fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
 			os.Exit(1)
 		}
