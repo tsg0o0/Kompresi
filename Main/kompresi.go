@@ -1,4 +1,4 @@
-package kompresi
+package main
 
 import (
 	"fmt"
