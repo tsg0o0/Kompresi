@@ -9,6 +9,7 @@ import (
 	_ "image/png"
 	_ "image/jpeg"
 	"path/filepath"
+	"github.com/go-fsnotify/fsnotify"
 )
 
 func main() {
