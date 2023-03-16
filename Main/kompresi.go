@@ -292,7 +292,10 @@ func loadConfig(ignore bool) {
 }
 
 func imgCatch(inputFile string) {
-	file, _ := os.Open(inputFile)
+	file, err := os.Open(inputFile)
+	for err != nil {
+		file, err = os.Open(inputFile)
+	}
 	defer file.Close()
 	_, format, _ := image.DecodeConfig(file)
 	if format == "png" {
