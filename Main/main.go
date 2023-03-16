@@ -5,11 +5,30 @@ import (
 	"runtime"
 	"os"
 	"os/exec"
+	"image"
+	_ "image/png"
+	_ "image/jpeg"
 )
 
 func main() {
 	arg := os.Args[1]
-	pngCompress(arg)
+	imgCatch(arg)
+}
+
+func imgCatch(inputFile string) {
+	file, _ := os.Open(inputFile)
+	defer file.Close()
+	_, format, err := image.DecodeConfig(file)
+	if err != nil {
+    	fmt.Println("Error: ", err)
+	}else{
+		if format == "png" {
+			//PNG
+			pngCompress(inputFile)
+		}else if format == "jpeg" {
+			//JPEG
+		}
+	}
 }
 
 func pngCompress(inputFile string) {
