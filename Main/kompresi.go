@@ -306,6 +306,12 @@ func jpegCompress(inputFile string) {
 	exedir = filepath.Dir(exedir)
 	
 	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
+	fmt.Println(outputFile)
+	makedirName := strings.Replace(outputFile, filepath.Base(outputFile), "", 1)
+	fmt.Println(makedirName)
+	if err := os.MkdirAll(makedirName, 0744); err != nil {
+        fmt.Println(err)
+    }
 	
 	cmd := exec.Command("guetzli", inputFile, outputFile)
 	// run guetzli
