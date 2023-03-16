@@ -56,6 +56,7 @@ func main() {
 		//Run daemon
 		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
 		loadConfig(false)
+		watcherDaemon()
 	}else if len(arg) > 2 {
 		loadConfig(true)
 		//Edit config
@@ -121,7 +122,42 @@ func main() {
 	}
 }
 
-func loadConfig() {
+func watcherDaemon() {
+	//watch dir
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		fmt.Println("Error creating watcher:", err)
+		return
+	}
+	defer watcher.Close()
+
+	err = watcher.Add(config.InputDir)
+	if err != nil {
+		fmt.Println("Error adding watch:", err)
+		return
+	}
+
+	//event
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+			if event.Op&fsnotify.Create == fsnotify.Create {
+				fmt.Println("File Detect:", event.Name)
+				imgCatch(event.Name)
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+			fmt.Println("Error:", err)
+		}
+	}
+}
+
+func loadConfig(ignore bool) {
 	exedir, _ := os.Executable()
 	exedir = filepath.Dir(exedir)
 	
@@ -235,7 +271,7 @@ func jpegCompress(inputFile string) {
 	}else{
 		//Success
 		resultInfo, _ := os.Stat(inputFile)
-		fmt.Println("Success. (by guetzli)")
+		fmt.Println("\x1b[32mSuccess. (by guetzli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
 		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
