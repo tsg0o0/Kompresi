@@ -55,7 +55,7 @@ func imgCatch(inputFile string) {
 	defer file.Close()
 	_, format, err := image.DecodeConfig(file)
 	if err != nil {
-    	fmt.Println("Error: ", err)
+    	fmt.Println("\x1b[31mFile Error: ", err, "\x1b[0m")
 	}else{
 		if format == "png" {
 			//PNG
