@@ -173,6 +173,21 @@ func watchDir(watcher *fsnotify.Watcher, path string) {
     }
 }
 
+func bootResearch(rootDir string) ([]string, error) {
+	var paths []string
+	err := filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			paths = append(paths, path)
+		}
+		return nil
+	})
+	return paths, err
+}
+
+
 func watcherDaemon() {
 	//watch dir
 	watcher, err := fsnotify.NewWatcher()
@@ -181,6 +196,16 @@ func watcherDaemon() {
 		return
 	}
 	defer watcher.Close()
+	
+	//Boot Research
+	filePaths, err := bootResearch(config.InputDir)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, path := range filePaths {
+		imgCatch(path)
+	}
+
 
 	err = filepath.Walk(config.InputDir, func(path string, info os.FileInfo, err error) error {
         if err != nil {
@@ -196,7 +221,6 @@ func watcherDaemon() {
         fmt.Println(err)
         return
     }
-
     done := make(chan bool)
     <-done
 
