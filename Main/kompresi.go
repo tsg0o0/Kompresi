@@ -50,17 +50,19 @@ func pngCompress(inputFile string) {
 		cmd = exec.Command(exedir + "/resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
 		cmd = exec.Command(exedir + "/resources/win/zopflipng", "-m", "-y", inputFile, inputFile)
+	}else{
+		fmt.Println("\x1b[31mFatal error: This operating system could not be recognized.\x1b[0m")
 	}
 	
 	//RUN
 	exeerr := cmd.Run()
 	if exeerr != nil {
 		//Failed
-		fmt.Println("Failed. (by zopfli): ", exeerr)
+		fmt.Println("\x1b[33mFailed. (by zopfli): ", exeerr, "\x1b[0m")
 	}else{
 		//Success
 		resultInfo, _ := os.Stat(inputFile)
-		fmt.Println("Success. (by zopfli)")
+		fmt.Println("\x1b[32mSuccess. (by zopfli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
 		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
@@ -86,7 +88,7 @@ func jpegCompress(inputFile string) {
 	exeerr := cmd.Run()
 	if exeerr != nil {
 		//Failed
-		fmt.Println("Failed. (by guetzli): ", exeerr)
+		fmt.Println("\x1b[33mFailed. (by guetzli): ", exeerr, "\x1b[0m")
 	}else{
 		//Success
 		resultInfo, _ := os.Stat(inputFile)
