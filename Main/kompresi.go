@@ -5,12 +5,22 @@ import (
 	"runtime"
 	"os"
 	"os/exec"
+	"encoding/json"
+// 	"io/ioutil"
 	"image"
 	_ "image/png"
 	_ "image/jpeg"
 	"path/filepath"
-	"github.com/go-fsnotify/fsnotify"
+// 	"github.com/go-fsnotify/fsnotify"
 )
+
+type Config struct {
+    Version      int    `json:"version"`
+    InputDir     string `json:"inputDir"`
+    OutputDir    string `json:"outputDir"`
+    DeleteOrigin bool   `json:"deleteOrigin"`
+}
+var config Config
 
 func main() {
 	exedir, err := os.Executable()
@@ -20,7 +30,6 @@ func main() {
 		os.Exit(1)
 	}
 	exedir = filepath.Dir(exedir)
-	fmt.Println("EXE Directory: ", exedir)
 	
 	//bin check
 	if runtime.GOOS == "darwin" {
@@ -43,12 +52,84 @@ func main() {
 	}
 	
 	arg := os.Args
-	fmt.Println(arg)
 	if len(arg) == 1 {
+		//Run daemon
 		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
+		loadConfig()
+		
+	}else if len(arg) > 2 {
+		//Edit config
+		if arg[1] == "inputDir" {
+			
+		}else if arg[1] == "outputDir" {
+			
+		}else if arg[1] == "deleteOrigin" {
+			
+		}
 	}else{
-		imgCatch(arg[1])
+		if arg[1] == "help" {
+			fmt.Println("\n\x1b[35m==Change Settings==\x1b[0m")
+			fmt.Println("Use the following command or rewrite the JSON file directly to complete the setup.")
+			fmt.Println("\nCommand (argument):")
+			fmt.Println("\n	inputDir      'YOUR INPUT DIRECTRY PATH'")
+			fmt.Println("	- Select the directory to load the images.")
+			fmt.Println("\n	outputDir     'YOUR OUTPUT DIRECTRY PATH'")
+			fmt.Println("	- Select a directory to output compressed images.")
+			fmt.Println("\n	deleteOrigin  'Yes or No'")
+			fmt.Println("	- Delete original files after compression.")
+			fmt.Println("\n\x1b[35m==Compress images by themselves==\x1b[0m")
+			fmt.Println("\nArgument: 'YOUR INPUT IMAGE PATH'")
+			fmt.Println("\n\x1b[32m==Starts the daemon with no arguments!==\x1b[0m")
+			os.Exit(1)
+		}else if arg[1] == "license" {
+			fmt.Println("\n\x1b[32m==Kompresi by tsg0o0==\x1b[0m")
+			fmt.Println("\nGo application for lossless compression of PNG and JPEG images.")
+			fmt.Println("\nThis software is licensed under the terms of the Mozilla Public License 2.0.")
+			fmt.Println("(https://www.mozilla.org/en-US/MPL/2.0/)")
+			fmt.Println("")
+			os.Exit(1)
+		}else{
+			//Compress Image
+			imgCatch(arg[1])
+		}
 	}
+}
+
+func loadConfig() {
+	exedir, _ := os.Executable()
+	exedir = filepath.Dir(exedir)
+	
+	fmt.Println("Loading config...")
+	configFile, err := os.Open(exedir + "/config.json")
+		if err != nil {
+			fmt.Println("\x1b[31mFatal error: Config file Cannot found.\x1b[0m")
+			fmt.Println("\x1b[31m", err, "\x1b[0m")
+			os.Exit(1)
+		}
+		defer configFile.Close()
+		jsonParser := json.NewDecoder(configFile)
+		if err := jsonParser.Decode(&config); err != nil {
+			fmt.Println("\x1b[31mFatal error: Error decoding config file.\x1b[0m")
+			fmt.Println("\x1b[31m", err, "\x1b[0m")
+			os.Exit(1)
+		}
+		fmt.Println("Input directory:", config.InputDir)
+		fmt.Println("Output directory:", config.OutputDir)
+		fmt.Println("Delete original files:", config.DeleteOrigin)
+		
+		if config.InputDir == "" && config.OutputDir == "" {
+			fmt.Println("\n\x1b[35m==Complete the setup!==\x1b[0m")
+			fmt.Println("Use the following command or rewrite the JSON file directly to complete the setup.")
+			fmt.Println("\nCommand:")
+			fmt.Println("\n	inputDir      'YOUR INPUT DIRECTRY PATH'")
+			fmt.Println("	- Select the directory to load the images.")
+			fmt.Println("\n	outputDir     'YOUR OUTPUT DIRECTRY PATH'")
+			fmt.Println("	- Select a directory to output compressed images.")
+			fmt.Println("\n	deleteOrigin  'Yes or No'")
+			fmt.Println("	- Delete original files after compression.")
+			fmt.Println("\n\x1b[35mPlease change the settings and try again.\x1b[0m")
+			os.Exit(1)
+		}
 }
 
 func imgCatch(inputFile string) {
