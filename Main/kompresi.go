@@ -140,39 +140,67 @@ func main() {
 	}
 }
 
+func watchDir(watcher *fsnotify.Watcher, path string) {
+    err := watcher.Add(path)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    for {
+        select {
+        case event, ok := <-watcher.Events:
+            if !ok {
+                return
+            }
+
+            if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Rename == fsnotify.Rename {
+                fi, err := os.Stat(event.Name)
+                if err == nil && fi.IsDir() {
+                    fmt.Println("New dir detect:", event.Name)
+                    go watchDir(watcher, event.Name)
+                }else{
+                	imgCatch(event.Name)
+                }
+            }
+            
+        case err, ok := <-watcher.Errors:
+            if !ok {
+                return
+            }
+            fmt.Println("\x1b[31mError:", err, "\x1b[0m")
+        }
+    }
+}
+
 func watcherDaemon() {
 	//watch dir
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		fmt.Println("Error creating watcher:", err)
+		fmt.Println("\x1b[31mError creating watcher:", err, "\x1b[0m")
 		return
 	}
 	defer watcher.Close()
 
-	err = watcher.Add(config.InputDir)
-	if err != nil {
-		fmt.Println("Error adding watch:", err)
-		return
-	}
+	err = filepath.Walk(config.InputDir, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+        if info.IsDir() {
+            fmt.Println("Detected dir:", path)
+            go watchDir(watcher, path)
+        }
+        return nil
+    })
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    done := make(chan bool)
+    <-done
 
 	//event
-	for {
-		select {
-		case event, ok := <-watcher.Events:
-			if !ok {
-				return
-			}
-			if event.Op&fsnotify.Create == fsnotify.Create {
-				fmt.Println("File Detect:", event.Name)
-				imgCatch(event.Name)
-			}
-		case err, ok := <-watcher.Errors:
-			if !ok {
-				return
-			}
-			fmt.Println("Error:", err)
-		}
-	}
 }
 
 func loadConfig(ignore bool) {
@@ -245,9 +273,7 @@ func pngCompress(inputFile string) {
 	exedir = filepath.Dir(exedir)
 	
 	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
-	fmt.Println(outputFile)
 	makedirName := strings.Replace(outputFile, filepath.Base(outputFile), "", 1)
-	fmt.Println(makedirName)
 	if err := os.MkdirAll(makedirName, 0744); err != nil {
         fmt.Println(err)
     }
@@ -306,9 +332,7 @@ func jpegCompress(inputFile string) {
 	exedir = filepath.Dir(exedir)
 	
 	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
-	fmt.Println(outputFile)
 	makedirName := strings.Replace(outputFile, filepath.Base(outputFile), "", 1)
-	fmt.Println(makedirName)
 	if err := os.MkdirAll(makedirName, 0744); err != nil {
         fmt.Println(err)
     }
