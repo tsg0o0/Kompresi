@@ -1,6 +1,6 @@
 {
   "version": 0,
   "inputDir": "",
-  "outputDir": "/Users/tsg0o0/Desktop/testnet",
-  "deleteOrigin": false
+  "outputDir": "",
+  "deleteOrigin": true
 }
