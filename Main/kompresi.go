@@ -42,8 +42,8 @@ func main() {
 		_, err = os.Stat(exedir + "/resources/linux/guetzli")
 		_, err = os.Stat(exedir + "/resources/linux/zopflipng")
 	}else if runtime.GOOS == "windows" {
-		_, err = os.Stat(exedir + "/resources/win/guetzli")
-		_, err = os.Stat(exedir + "/resources/win/zopflipng")
+		_, err = os.Stat(exedir + "/resources/win/guetzli.exe")
+		_, err = os.Stat(exedir + "/resources/win/zopflipng.exe")
 	}else{
 		fmt.Println("\x1b[31mFatal error: This operating system could not be recognized.\x1b[0m")
 		os.Exit(1)
