@@ -78,7 +78,7 @@ func main() {
 			fmt.Println("\n	deleteOrigin  'Yes or No'")
 			fmt.Println("	- Delete original files after compression.")
 			fmt.Println("\n\x1b[35m==Compress images by themselves==\x1b[0m")
-			fmt.Println("\nArgument: 'YOUR INPUT IMAGE PATH'")
+			fmt.Println("\n	Argument: 'YOUR INPUT IMAGE PATH'")
 			fmt.Println("\n\x1b[32m==Starts the daemon with no arguments!==\x1b[0m")
 			os.Exit(1)
 		}else if arg[1] == "license" {
