@@ -8,6 +8,7 @@ import (
 	"image"
 	_ "image/png"
 	_ "image/jpeg"
+	"path/filepath"
 )
 
 func main() {
@@ -36,20 +37,28 @@ func pngCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by zopfli)")
 	
-	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
+	exedir, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error: ", err)
+		os.Exit(1)
+	}
+	exedir = filepath.Dir(exedir)
 	
+	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
 	// run zopflipng
 	if runtime.GOOS == "darwin" {
-		cmd = exec.Command("./resources/mac/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/mac/zopflipng", "-m", "-y", inputFile, inputFile)
 	}else if runtime.GOOS == "linux" {
-		cmd = exec.Command("./resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command("./resources/win/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/zopflipng", "-m", "-y", inputFile, inputFile)
 	}
-	err := cmd.Run()
-	if err != nil {
+	
+	//RUN
+	exeerr := cmd.Run()
+	if exeerr != nil {
 		//Failed
-		fmt.Println("Failed. (by zopfli): ", err)
+		fmt.Println("Failed. (by zopfli): ", exeerr)
 	}else{
 		//Success
 		resultInfo, _ := os.Stat(inputFile)
@@ -65,20 +74,28 @@ func jpegCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by guetzli)")
 	
-	cmd := exec.Command("guetzli", inputFile, inputFile)
+	exedir, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error: ", err)
+		os.Exit(1)
+	}
+	exedir = filepath.Dir(exedir)
 	
+	cmd := exec.Command("guetzli", inputFile, inputFile)
 	// run guetzli
 	if runtime.GOOS == "darwin" {
-		cmd = exec.Command("./resources/mac/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/mac/guetzli", inputFile, inputFile)
 	}else if runtime.GOOS == "linux" {
-		cmd = exec.Command("./resources/linux/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/linux/guetzli", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command("./resources/win/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/guetzli", inputFile, inputFile)
 	}
-	err := cmd.Run()
-	if err != nil {
+	
+	//RUN
+	exeerr := cmd.Run()
+	if exeerr != nil {
 		//Failed
-		fmt.Println("Failed. (by guetzli): ", err)
+		fmt.Println("Failed. (by guetzli): ", exeerr)
 	}else{
 		//Success
 		resultInfo, _ := os.Stat(inputFile)
