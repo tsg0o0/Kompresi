@@ -11,13 +11,37 @@ import (
 	"path/filepath"
 )
 
-var exedir = ""
-
 func main() {
-	arg := os.Args[1]
-	exedir, _ := os.Executable()
+	exedir, err := os.Executable()
+	if err != nil {
+		fmt.Println("\x1b[33mFatal error: Could not obtain the location of the executable file.\x1b[0m")
+		fmt.Println("\x1b[33m", err, "\x1b[0m")
+		os.Exit(1)
+	}
 	exedir = filepath.Dir(exedir)
 	fmt.Println("EXE Directory: ", exedir)
+	
+	//bin check
+	if runtime.GOOS == "darwin" {
+		_, err = os.Stat(exedir + "/resources/mac/guetzli")
+		_, err = os.Stat(exedir + "/resources/mac/zopflipng")
+	}else if runtime.GOOS == "linux" {
+		_, err = os.Stat(exedir + "/resources/linux/guetzli")
+		_, err = os.Stat(exedir + "/resources/linux/zopflipng")
+	}else if runtime.GOOS == "windows" {
+		_, err = os.Stat(exedir + "/resources/win/guetzli")
+		_, err = os.Stat(exedir + "/resources/win/zopflipng")
+	}else{
+		fmt.Println("\x1b[31mFatal error: This operating system could not be recognized.\x1b[0m")
+		os.Exit(1)
+	}
+	if err != nil {
+		fmt.Println("\x1b[31mFatal error: Binary required for execution not found.\x1b[0m")
+		fmt.Println("\x1b[31m", err, "\x1b[0m")
+		os.Exit(1)
+	}
+	
+	arg := os.Args[1]
 	imgCatch(arg)
 }
 
@@ -41,6 +65,8 @@ func imgCatch(inputFile string) {
 func pngCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by zopfli)")
+	exedir, _ := os.Executable()
+	exedir = filepath.Dir(exedir)
 	
 	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
 	// run zopflipng
@@ -50,8 +76,6 @@ func pngCompress(inputFile string) {
 		cmd = exec.Command(exedir + "/resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
 		cmd = exec.Command(exedir + "/resources/win/zopflipng", "-m", "-y", inputFile, inputFile)
-	}else{
-		fmt.Println("\x1b[31mFatal error: This operating system could not be recognized.\x1b[0m")
 	}
 	
 	//RUN
@@ -73,6 +97,8 @@ func pngCompress(inputFile string) {
 func jpegCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by guetzli)")
+	exedir, _ := os.Executable()
+	exedir = filepath.Dir(exedir)
 	
 	cmd := exec.Command("guetzli", inputFile, inputFile)
 	// run guetzli
