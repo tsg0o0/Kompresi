@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"encoding/json"
-// 	"io/ioutil"
+	"io/ioutil"
 	"image"
 	_ "image/png"
 	_ "image/jpeg"
@@ -60,12 +60,30 @@ func main() {
 	}else if len(arg) > 2 {
 		//Edit config
 		if arg[1] == "inputDir" {
-			
+			config.InputDir = arg[2]
 		}else if arg[1] == "outputDir" {
-			
+			config.OutputDir = arg[2]
 		}else if arg[1] == "deleteOrigin" {
-			
+			if arg[2] == "Yes" || arg[2] == "y" || arg[2] == "true" {
+				config.DeleteOrigin = true
+			}else if arg[2] == "No" || arg[2] == "n" || arg[2] == "false" {
+				config.DeleteOrigin = false
+			}else{
+				fmt.Println("\x1b[31mThe only values that disappear with the input are Yes or No.\x1b[0m")
+			}
 		}
+		configJSON, err := json.MarshalIndent(config, "", "  ")
+		if err != nil {
+			fmt.Println("\x1b[31mError encoding config file\x1b[0m")
+			fmt.Println("\x1b[31m", err, "\x1b[0m")
+			os.Exit(1)
+		}
+		if err := ioutil.WriteFile("config.json", configJSON, 0644); err != nil {
+			fmt.Println("\x1b[31mError writing config file\x1b[0m")
+			fmt.Println("\x1b[31m", err, "\x1b[0m")
+		}
+		fmt.Println("\n\x1b[32mConfig file updated.\x1b[0m")
+		os.Exit(1)
 	}else{
 		if arg[1] == "help" {
 			fmt.Println("\n\x1b[35m==Change Settings==\x1b[0m")
