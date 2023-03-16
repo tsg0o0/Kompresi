@@ -285,11 +285,10 @@ func pngCompress(inputFile string) {
 		fmt.Println("\x1b[33mFailed. (by zopfli): ", exeerr, "\x1b[0m")
 	}else{
 		//Success
-		maybeOrigin, err := os.Stat(inputFile)
-		if config.DeleteOrigin == true && originalInfo == maybeOrigin && err != nil {
+		if config.DeleteOrigin == true {
 			os.Remove(inputFile)
 		}
-		resultInfo, _ := os.Stat(inputFile)
+		resultInfo, _ := os.Stat(outputFile)
 		fmt.Println("\x1b[32mSuccess. (by zopfli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
