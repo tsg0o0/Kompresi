@@ -268,7 +268,7 @@ func pngCompress(inputFile string) {
 	}
 	fmt.Println("OptimArg:", optimArg)
 	
-	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
+	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, outputFile)
 	// run zopflipng
 	if runtime.GOOS == "darwin" {
 		cmd = exec.Command(exedir + "/resources/mac/zopflipng", optimArg, "-y", inputFile, outputFile)
@@ -303,14 +303,16 @@ func jpegCompress(inputFile string) {
 	exedir, _ := os.Executable()
 	exedir = filepath.Dir(exedir)
 	
-	cmd := exec.Command("guetzli", inputFile, inputFile)
+	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
+	
+	cmd := exec.Command("guetzli", inputFile, outputFile)
 	// run guetzli
 	if runtime.GOOS == "darwin" {
-		cmd = exec.Command(exedir + "/resources/mac/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/mac/guetzli", inputFile, outputFile)
 	}else if runtime.GOOS == "linux" {
-		cmd = exec.Command(exedir + "/resources/linux/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/linux/guetzli", inputFile, outputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command(exedir + "/resources/win/guetzli.exe", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/guetzli.exe", inputFile, outputFile)
 	}
 	
 	//RUN
