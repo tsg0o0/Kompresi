@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 	"image"
 	_ "image/png"
 	_ "image/jpeg"
@@ -19,6 +20,8 @@ type Config struct {
     InputDir     string `json:"inputDir"`
     OutputDir    string `json:"outputDir"`
     DeleteOrigin bool   `json:"deleteOrigin"`
+    OptimLv      int   `json:"optimLv"`
+    //0-Low 2-High
 }
 var config Config
 
@@ -80,6 +83,16 @@ func main() {
 			}else{
 				fmt.Println("\x1b[31mThe only values that disappear with the input are Yes or No.\x1b[0m")
 			}
+		}else if arg[1] == "optimLv" {
+			if arg[2] == "0" {
+				config.OptimLv = 0
+			}else if arg[2] == "1" {
+				config.OptimLv = 1
+			}else if arg[2] == "2" {
+				config.OptimLv = 2
+			}else{
+				fmt.Println("\x1b[31mThe only values that disappear with the input are Yes or No.\x1b[0m")
+			}
 		}
 		configJSON, err := json.MarshalIndent(config, "", "  ")
 		if err != nil {
@@ -104,6 +117,11 @@ func main() {
 			fmt.Println("	- Select a directory to output compressed images.")
 			fmt.Println("\n	deleteOrigin  'Yes or No'")
 			fmt.Println("	- Delete original files after compression.")
+			fmt.Println("\n	optimLv  '0 - 2'")
+			fmt.Println("	- Change the compression level.")
+			fmt.Println("	  0: Fast but low compression")
+			fmt.Println("	  1: Auto")
+			fmt.Println("	  2: Slow but high compression")
 			fmt.Println("\n\x1b[35m==Compress images by themselves==\x1b[0m")
 			fmt.Println("\n	Argument: 'YOUR INPUT IMAGE PATH'")
 			fmt.Println("\n\x1b[32m==Starts the daemon with no arguments!==\x1b[0m")
@@ -175,9 +193,13 @@ func loadConfig(ignore bool) {
 			fmt.Println("\x1b[31m", err, "\x1b[0m")
 			os.Exit(1)
 		}
+		
+		if ignore == false {
 		fmt.Println("Input directory:", config.InputDir)
 		fmt.Println("Output directory:", config.OutputDir)
 		fmt.Println("Delete original files:", config.DeleteOrigin)
+		fmt.Println("Optimize Level:", config.OptimLv)
+		}
 		
 		if config.InputDir == "" && config.OutputDir == "" && ignore == false {
 			fmt.Println("\n\x1b[35m==Complete the setup!==\x1b[0m")
@@ -189,6 +211,11 @@ func loadConfig(ignore bool) {
 			fmt.Println("	- Select a directory to output compressed images.")
 			fmt.Println("\n	deleteOrigin  'Yes or No'")
 			fmt.Println("	- Delete original files after compression.")
+			fmt.Println("\n	optimLv  '0 - 2'")
+			fmt.Println("	- Change the compression level.")
+			fmt.Println("	  0: Fast but low compression")
+			fmt.Println("	  1: Auto")
+			fmt.Println("	  2: Slow but high compression")
 			fmt.Println("\n\x1b[35mPlease change the settings and try again.\x1b[0m")
 			os.Exit(1)
 		}
@@ -221,14 +248,34 @@ func pngCompress(inputFile string) {
 	exedir, _ := os.Executable()
 	exedir = filepath.Dir(exedir)
 	
+	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
+	
+	optimArg := "--iterations=1"
+	if config.OptimLv == 0 {
+		optimArg = "--iterations=1"
+	}else if config.OptimLv == 1 {
+		if originalInfo.Size() >= 524288 {
+			optimArg = "--iterations=1"
+		}else if originalInfo.Size() >= 65536 {
+			optimArg = "--iterations=5"
+		}else if originalInfo.Size() >= 8192 {
+			optimArg = "--iterations=10"
+		}else{
+			optimArg = "--iterations=15"
+		}
+	}else if config.OptimLv == 2 {
+		optimArg = "--iterations=15"
+	}
+	fmt.Println("OptimArg:", optimArg)
+	
 	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
 	// run zopflipng
 	if runtime.GOOS == "darwin" {
-		cmd = exec.Command(exedir + "/resources/mac/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/mac/zopflipng", optimArg, "-y", inputFile, outputFile)
 	}else if runtime.GOOS == "linux" {
-		cmd = exec.Command(exedir + "/resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/linux/zopflipng", optimArg, "-y", inputFile, outputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command(exedir + "/resources/win/zopflipng.exe", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/zopflipng.exe", optimArg, "-y", inputFile, outputFile)
 	}
 	
 	//RUN
@@ -238,6 +285,10 @@ func pngCompress(inputFile string) {
 		fmt.Println("\x1b[33mFailed. (by zopfli): ", exeerr, "\x1b[0m")
 	}else{
 		//Success
+		maybeOrigin, err := os.Stat(inputFile)
+		if config.DeleteOrigin == true && originalInfo == maybeOrigin && err != nil {
+			os.Remove(inputFile)
+		}
 		resultInfo, _ := os.Stat(inputFile)
 		fmt.Println("\x1b[32mSuccess. (by zopfli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())

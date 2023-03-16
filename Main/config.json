@@ -1,6 +1,5 @@
 {
   "version": 0,
-  "inputDir": "",
-  "outputDir": "",
-  "deleteOrigin": true
+  "deleteOrigin": true,
+  "optimLv": 0
 }
