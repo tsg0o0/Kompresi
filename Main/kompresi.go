@@ -11,8 +11,13 @@ import (
 	"path/filepath"
 )
 
+var exedir = ""
+
 func main() {
 	arg := os.Args[1]
+	exedir, _ := os.Executable()
+	exedir = filepath.Dir(exedir)
+	fmt.Println("EXE Directory: ", exedir)
 	imgCatch(arg)
 }
 
@@ -36,13 +41,6 @@ func imgCatch(inputFile string) {
 func pngCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by zopfli)")
-	
-	exedir, err := os.Executable()
-	if err != nil {
-		fmt.Println("Error: ", err)
-		os.Exit(1)
-	}
-	exedir = filepath.Dir(exedir)
 	
 	cmd := exec.Command("zopflipng", "-m", "-y", inputFile, inputFile)
 	// run zopflipng
@@ -73,13 +71,6 @@ func pngCompress(inputFile string) {
 func jpegCompress(inputFile string) {
 	originalInfo, _ := os.Stat(inputFile)
 	fmt.Println("Compressing... (by guetzli)")
-	
-	exedir, err := os.Executable()
-	if err != nil {
-		fmt.Println("Error: ", err)
-		os.Exit(1)
-	}
-	exedir = filepath.Dir(exedir)
 	
 	cmd := exec.Command("guetzli", inputFile, inputFile)
 	// run guetzli
