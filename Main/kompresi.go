@@ -60,9 +60,17 @@ func main() {
 	}else if len(arg) > 2 {
 		//Edit config
 		if arg[1] == "inputDir" {
-			config.InputDir = arg[2]
+			if arg[2] == config.OutputDir {
+				fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
+			}else{
+				config.InputDir = arg[2]
+			}
 		}else if arg[1] == "outputDir" {
-			config.OutputDir = arg[2]
+			if arg[2] == config.InputDir {
+				fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
+			}else{
+				config.OutputDir = arg[2]
+			}
 		}else if arg[1] == "deleteOrigin" {
 			if arg[2] == "Yes" || arg[2] == "y" || arg[2] == "true" {
 				config.DeleteOrigin = true
