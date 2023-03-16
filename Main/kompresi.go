@@ -41,8 +41,13 @@ func main() {
 		os.Exit(1)
 	}
 	
-	arg := os.Args[1]
-	imgCatch(arg)
+	arg := os.Args
+	fmt.Println(arg)
+	if len(arg) == 1 {
+		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
+	}else{
+		imgCatch(arg[1])
+	}
 }
 
 func imgCatch(inputFile string) {
