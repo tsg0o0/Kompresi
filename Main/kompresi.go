@@ -11,7 +11,7 @@ import (
 	_ "image/png"
 	_ "image/jpeg"
 	"path/filepath"
-// 	"github.com/go-fsnotify/fsnotify"
+	"github.com/fsnotify/fsnotify"
 )
 
 type Config struct {
