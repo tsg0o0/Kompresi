@@ -228,17 +228,13 @@ func loadConfig(ignore bool) {
 func imgCatch(inputFile string) {
 	file, _ := os.Open(inputFile)
 	defer file.Close()
-	_, format, err := image.DecodeConfig(file)
-	if err != nil {
-    	fmt.Println("\x1b[31mFile Error: ", err, "\x1b[0m")
-	}else{
-		if format == "png" {
-			//PNG
-			pngCompress(inputFile)
-		}else if format == "jpeg" {
-			//JPEG
-			jpegCompress(inputFile)
-		}
+	_, format, _ := image.DecodeConfig(file)
+	if format == "png" {
+		//PNG
+		pngCompress(inputFile)
+	}else if format == "jpeg" {
+		//JPEG
+		jpegCompress(inputFile)
 	}
 }
 
