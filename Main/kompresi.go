@@ -80,7 +80,7 @@ func pngCompress(inputFile string) {
 	}else if runtime.GOOS == "linux" {
 		cmd = exec.Command(exedir + "/resources/linux/zopflipng", "-m", "-y", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command(exedir + "/resources/win/zopflipng", "-m", "-y", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/zopflipng.exe", "-m", "-y", inputFile, inputFile)
 	}
 	
 	//RUN
@@ -112,7 +112,7 @@ func jpegCompress(inputFile string) {
 	}else if runtime.GOOS == "linux" {
 		cmd = exec.Command(exedir + "/resources/linux/guetzli", inputFile, inputFile)
 	}else if runtime.GOOS == "windows" {
-		cmd = exec.Command(exedir + "/resources/win/guetzli", inputFile, inputFile)
+		cmd = exec.Command(exedir + "/resources/win/guetzli.exe", inputFile, inputFile)
 	}
 	
 	//RUN
