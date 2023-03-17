@@ -1,4 +1,7 @@
 # Kompresi
+
+[日本語訳はこちら](https://github.com/tsg0o0/Kompresi/blob/master/README_JA.md)
+
 Go application that compresses PNG and JPEG images in folders in the background with no degradation.
 
 **This application is still in alpha testing.
@@ -47,7 +50,7 @@ Run again with no arguments. Starts running in the background.
 
 ## Support
 
-If you find a bug or have a question, please create an Issue or [contact me](https://tsg0o0.com/contact/).
+If you find a bug or have a question, please create an [Issue](https://github.com/tsg0o0/Kompresi/issues) or [contact me](https://tsg0o0.com/contact/).
 
 ## License
 
