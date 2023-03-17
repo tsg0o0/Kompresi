@@ -104,7 +104,9 @@ func main() {
 			fmt.Println("\x1b[31m", err, "\x1b[0m")
 			os.Exit(1)
 		}
-		if err := ioutil.WriteFile("config.json", configJSON, 0644); err != nil {
+		exedir, _ := os.Executable()
+		exedir = filepath.Dir(exedir)
+		if err := ioutil.WriteFile(exedir + "/config.json", configJSON, 0644); err != nil {
 			fmt.Println("\x1b[31mError writing config file\x1b[0m")
 			fmt.Println("\x1b[31m", err, "\x1b[0m")
 		}
