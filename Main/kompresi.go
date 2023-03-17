@@ -355,7 +355,11 @@ func pngCompress(inputFile string) {
 	}else{
 		//Success
 		if config.DeleteOrigin == true {
-			os.Remove(inputFile)
+			alreadyDetectedPaths[inputFile] = false
+			err := os.Remove(inputFile)
+			for err != nil {
+				err = os.Remove(inputFile)
+			}
 		}
 		resultInfo, _ := os.Stat(outputFile)
 		fmt.Println("\x1b[32mSuccess. (by zopfli)\x1b[0m")
@@ -396,7 +400,11 @@ func jpegCompress(inputFile string) {
 	}else{
 		//Success
 		if config.DeleteOrigin == true {
-			os.Remove(inputFile)
+			alreadyDetectedPaths[inputFile] = false
+			err := os.Remove(inputFile)
+			for err != nil {
+				err = os.Remove(inputFile)
+			}
 		}
 		resultInfo, _ := os.Stat(inputFile)
 		fmt.Println("\x1b[32mSuccess. (by guetzli)\x1b[0m")
