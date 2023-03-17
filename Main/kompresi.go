@@ -296,8 +296,8 @@ func imgCatch(inputFile string) {
 	for err != nil {
 		file, err = os.Open(inputFile)
 	}
-	defer file.Close()
 	_, format, _ := image.DecodeConfig(file)
+	file.Close()
 	if format == "png" {
 		//PNG
 		pngCompress(inputFile)
