@@ -411,7 +411,7 @@ func jpegCompress(inputFile string) {
 				err = os.Remove(inputFile)
 			}
 		}
-		resultInfo, _ := os.Stat(inputFile)
+		resultInfo, _ := os.Stat(outputFile)
 		fmt.Println("\x1b[32mSuccess. (by guetzli)\x1b[0m")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
