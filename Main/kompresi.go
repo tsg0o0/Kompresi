@@ -316,7 +316,7 @@ func pngCompress(inputFile string) {
 	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
 	makedirName := strings.Replace(outputFile, filepath.Base(outputFile), "", 1)
 	if err := os.MkdirAll(makedirName, 0744); err != nil {
-        fmt.Println(err)
+        fmt.Println("\x1b[31mMkdir Error: ", err, "\x1b[0m")
     }
 	
 	optimArg := "--iterations=1"
@@ -375,7 +375,7 @@ func jpegCompress(inputFile string) {
 	outputFile := strings.Replace(inputFile, config.InputDir, config.OutputDir, 1)
 	makedirName := strings.Replace(outputFile, filepath.Base(outputFile), "", 1)
 	if err := os.MkdirAll(makedirName, 0744); err != nil {
-        fmt.Println(err)
+        fmt.Println("\x1b[31mMkdir Error: ", err, "\x1b[0m")
     }
 	
 	cmd := exec.Command("guetzli", inputFile, outputFile)
