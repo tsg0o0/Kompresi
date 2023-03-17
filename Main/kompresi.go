@@ -60,6 +60,9 @@ func main() {
 		//Run daemon
 		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
 		loadConfig(false)
+		if err := os.MkdirAll(config.InputDir, 0744); err != nil {
+        	fmt.Println("\x1b[31mMkdir Error: ", err, "\x1b[0m")
+    	}
 		watcherDaemon()
 	}else if len(arg) > 2 {
 		loadConfig(true)
