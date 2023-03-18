@@ -58,7 +58,7 @@ func main() {
 	arg := os.Args
 	if len(arg) == 1 {
 		//Run daemon
-		fmt.Println("\x1b[32mBooting Daemon...\x1b[0m")
+		fmt.Println("Booting Daemon...")
 		loadConfig(false)
 		if err := os.MkdirAll(config.InputDir, 0744); err != nil {
         	fmt.Println("\x1b[31mMkdir Error: ", err, "\x1b[0m")
@@ -367,7 +367,7 @@ func pngCompress(inputFile string) {
 			}
 		}
 		resultInfo, _ := os.Stat(outputFile)
-		fmt.Println("\x1b[32mSuccess. (by zopfli)\x1b[0m")
+		fmt.Println("Success. (by zopfli)")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
 		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
@@ -412,7 +412,7 @@ func jpegCompress(inputFile string) {
 			}
 		}
 		resultInfo, _ := os.Stat(outputFile)
-		fmt.Println("\x1b[32mSuccess. (by guetzli)\x1b[0m")
+		fmt.Println("Success. (by guetzli)")
 		fmt.Println("Original file size:", originalInfo.Size())
 		fmt.Println("Result file size:", resultInfo.Size())
 		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
