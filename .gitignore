@@ -19,7 +19,3 @@ Thumbs.db
 
 # log files, for some plugins
 *.log
-
-# Builds
-Main/kompresi
-Main/kompresi.exe
