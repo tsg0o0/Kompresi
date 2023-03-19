@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 	"log"
 	"os"
 	"os/exec"
@@ -32,6 +33,9 @@ func main() {
 		fmt.Println("", err, "")
 	}
 	exedir = filepath.Dir(exedir)
+	if runtime.GOOS == "darwin" {
+		exedir = strings.Replace(exedir, "/KompresiConfigure.app/Contents/MacOS", "", 1)
+	}
 	
 	//load cnfig.json
 	config, err := readConfig(exedir + "/config.json")
