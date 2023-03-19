@@ -23,7 +23,7 @@ cd ../
 cp Resources/config.json Build/windows/config.json
 cp -r Resources/resources/win/ Build/windows/resources/win/
 cd Main/
-GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc CGO_ENABLED=1 go build -ldflags "-H windowsgui" kompresi.go
+GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc CGO_ENABLED=1 go build kompresi.go
 cp kompresi.exe ../Build/windows/kompresi.exe
 rm kompresi.exe
 cd ../Configure/
