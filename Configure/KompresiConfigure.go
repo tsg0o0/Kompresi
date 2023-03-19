@@ -135,7 +135,7 @@ func main() {
 		}else if runtime.GOOS == "linux" {
 			cmd = exec.Command(exedir + "/kompresi")
 		}else if runtime.GOOS == "windows" {
-			cmd = exec.Command(exedir + "/kompresi.exe")
+			cmd = exec.Command(exedir + "/kompresi.exe daemon")
 		}else{
 			fmt.Println("Fatal error: This operating system could not be recognized.")
 		}

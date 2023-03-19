@@ -58,6 +58,10 @@ func main() {
 	arg := os.Args
 	if len(arg) == 1 {
 		//Run daemon
+		if runtime.GOOS == "windows" {
+			fmt.Println("\x1b[31mThe \"daemon\" argument is required to start the daemon on Windows.\x1b[0m")
+			os.Exit(1)
+		}
 		fmt.Println("Booting Daemon...")
 		loadConfig(false)
 		if err := os.MkdirAll(config.InputDir, 0744); err != nil {
@@ -131,14 +135,21 @@ func main() {
 			fmt.Println("\n\x1b[35m==Compress images by themselves==\x1b[0m")
 			fmt.Println("\n	Argument: 'YOUR INPUT IMAGE PATH'")
 			fmt.Println("\n\x1b[32m==Starts the daemon with no arguments!==\x1b[0m")
-			os.Exit(1)
+			os.Exit(0)
 		}else if arg[1] == "license" {
 			fmt.Println("\n\x1b[32m==Kompresi by tsg0o0==\x1b[0m")
 			fmt.Println("\nGo application for lossless compression of PNG and JPEG images.")
 			fmt.Println("\nThis software is licensed under the terms of the Mozilla Public License 2.0.")
 			fmt.Println("(https://www.mozilla.org/en-US/MPL/2.0/)")
 			fmt.Println("")
-			os.Exit(1)
+			os.Exit(0)
+		}else if arg[1] == "daemon" && runtime.GOOS == "windows" {
+			fmt.Println("Booting Daemon...")
+			loadConfig(false)
+			if err := os.MkdirAll(config.InputDir, 0744); err != nil {
+        		fmt.Println("\x1b[31mMkdir Error: ", err, "\x1b[0m")
+    		}
+			watcherDaemon()
 		}else{
 			//Compress Image
 			imgCatch(arg[1])
