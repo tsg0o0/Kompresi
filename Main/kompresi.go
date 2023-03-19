@@ -70,52 +70,62 @@ func main() {
 		watcherDaemon()
 	}else if len(arg) > 2 {
 		loadConfig(true)
+		configsuc := false
 		//Edit config
 		if arg[1] == "inputDir" {
 			if arg[2] == config.OutputDir {
 				fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
 			}else{
 				config.InputDir = arg[2]
+				configsuc = true
 			}
 		}else if arg[1] == "outputDir" {
 			if arg[2] == config.InputDir {
 				fmt.Println("\x1b[31mThe input and output directories cannot be the same.\x1b[0m")
 			}else{
 				config.OutputDir = arg[2]
+				configsuc = true
 			}
 		}else if arg[1] == "deleteOrigin" {
 			if arg[2] == "Yes" || arg[2] == "y" || arg[2] == "true" {
 				config.DeleteOrigin = true
+				configsuc = true
 			}else if arg[2] == "No" || arg[2] == "n" || arg[2] == "false" {
 				config.DeleteOrigin = false
+				configsuc = true
 			}else{
 				fmt.Println("\x1b[31mThe only values that disappear with the input are Yes or No.\x1b[0m")
 			}
 		}else if arg[1] == "optimLv" {
 			if arg[2] == "0" {
 				config.OptimLv = 0
+				configsuc = true
 			}else if arg[2] == "1" {
 				config.OptimLv = 1
+				configsuc = true
 			}else if arg[2] == "2" {
 				config.OptimLv = 2
+				configsuc = true
 			}else{
 				fmt.Println("\x1b[31mThe only values that disappear with the input are Yes or No.\x1b[0m")
 			}
 		}
-		configJSON, err := json.MarshalIndent(config, "", "  ")
-		if err != nil {
-			fmt.Println("\x1b[31mError encoding config file\x1b[0m")
-			fmt.Println("\x1b[31m", err, "\x1b[0m")
-			os.Exit(1)
+		if configsuc == true {
+			configJSON, err := json.MarshalIndent(config, "", "  ")
+			if err != nil {
+				fmt.Println("\x1b[31mError encoding config file\x1b[0m")
+				fmt.Println("\x1b[31m", err, "\x1b[0m")
+				os.Exit(1)
+			}
+			exedir, _ := os.Executable()
+			exedir = filepath.Dir(exedir)
+			if err := ioutil.WriteFile(exedir + "/config.json", configJSON, 0644); err != nil {
+				fmt.Println("\x1b[31mError writing config file\x1b[0m")
+				fmt.Println("\x1b[31m", err, "\x1b[0m")
+			}
+			fmt.Println("\n\x1b[32mConfig file updated.\x1b[0m")
+			os.Exit(0)
 		}
-		exedir, _ := os.Executable()
-		exedir = filepath.Dir(exedir)
-		if err := ioutil.WriteFile(exedir + "/config.json", configJSON, 0644); err != nil {
-			fmt.Println("\x1b[31mError writing config file\x1b[0m")
-			fmt.Println("\x1b[31m", err, "\x1b[0m")
-		}
-		fmt.Println("\n\x1b[32mConfig file updated.\x1b[0m")
-		os.Exit(1)
 	}else{
 		if arg[1] == "help" {
 			fmt.Println("\n\x1b[35m==Change Settings==\x1b[0m")
@@ -324,7 +334,11 @@ func imgCatch(inputFile string) {
 }
 
 func pngCompress(inputFile string) {
-	originalInfo, _ := os.Stat(inputFile)
+	originalInfo, err := os.Stat(inputFile)
+	if err != nil {
+		fmt.Println("\x1b[33mFailed to read file: ", err, "\x1b[0m")
+		return
+	}
 	fmt.Println("Compressing... (by zopfli)")
 	exedir, _ := os.Executable()
 	exedir = filepath.Dir(exedir)
@@ -377,17 +391,25 @@ func pngCompress(inputFile string) {
 				err = os.Remove(inputFile)
 			}
 		}
-		resultInfo, _ := os.Stat(outputFile)
-		fmt.Println("Success. (by zopfli)")
-		fmt.Println("Original file size:", originalInfo.Size())
-		fmt.Println("Result file size:", resultInfo.Size())
-		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
+		resultInfo, err := os.Stat(outputFile)
+		if err != nil {
+			fmt.Println("Success. (by zopfli)")
+			fmt.Println("Original file size:", originalInfo.Size())
+			fmt.Println("Result file size:", resultInfo.Size())
+			fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
+		}else{
+			fmt.Println("\x1b[33mFailed to save file: ", err, "\x1b[0m")
+		}
 	}
 	
 }
 
 func jpegCompress(inputFile string) {
-	originalInfo, _ := os.Stat(inputFile)
+	originalInfo, err := os.Stat(inputFile)
+	if err != nil {
+		fmt.Println("\x1b[33mFailed to read file: ", err, "\x1b[0m")
+		return
+	}
 	fmt.Println("Compressing... (by guetzli)")
 	exedir, _ := os.Executable()
 	exedir = filepath.Dir(exedir)
@@ -422,11 +444,15 @@ func jpegCompress(inputFile string) {
 				err = os.Remove(inputFile)
 			}
 		}
-		resultInfo, _ := os.Stat(outputFile)
-		fmt.Println("Success. (by guetzli)")
-		fmt.Println("Original file size:", originalInfo.Size())
-		fmt.Println("Result file size:", resultInfo.Size())
-		fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
+		resultInfo, err := os.Stat(outputFile)
+		if err != nil {
+			fmt.Println("Success. (by guetzli)")
+			fmt.Println("Original file size:", originalInfo.Size())
+			fmt.Println("Result file size:", resultInfo.Size())
+			fmt.Println("Percentage of original", ( ( 100 * resultInfo.Size() ) / originalInfo.Size() ), "%")
+		}else{
+			fmt.Println("\x1b[33mFailed to save file: ", err, "\x1b[0m")
+		}
 	}
 	
 }
