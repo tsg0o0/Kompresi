@@ -93,6 +93,33 @@ func main() {
 		}
 	})
 	
+	inputSelectFolder := widget.NewButton("Select Folder", func() {
+        dialog := dialog.NewFolderOpen(func(selected fyne.ListableURI, err error) {
+            if err == nil {
+            	if selected != nil {
+                	inputDir.SetText(selected.Path())
+                }
+            } else {
+                dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
+            }
+        }, w)
+        dialog.Show()
+        dialog.Resize(fyne.NewSize(1400, 1400))
+    })
+    outputSelectFolder := widget.NewButton("Select Folder", func() {
+        dialog := dialog.NewFolderOpen(func(selected fyne.ListableURI, err error) {
+            if err == nil {
+            	if selected != nil {
+                	outputDir.SetText(selected.Path())
+                }
+            } else {
+                dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
+            }
+        }, w)
+        dialog.Show()
+        dialog.Resize(fyne.NewSize(1400, 1400))
+    })
+	
 	//RUN
 	logWin := a.NewWindow("Kompresi Daemon")
     text := widget.NewTextGrid()
@@ -214,12 +241,14 @@ func main() {
 	})
 
 	//window
-	w.Resize(fyne.NewSize(712, 500))
+	w.Resize(fyne.NewSize(712, -1))
 	w.SetContent(container.NewVBox(
 		widget.NewLabel("Input Directory:"),
 		inputDir,
+		inputSelectFolder,
 		widget.NewLabel("Output Directory:"),
 		outputDir,
+		outputSelectFolder,
 		deleteOrigin,
 		widget.NewLabel("Optimize Level:"),
 		optimLv,
