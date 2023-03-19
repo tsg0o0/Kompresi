@@ -24,6 +24,8 @@ ZopfliとGuetzliは圧縮が**かなり遅い**です。
 
 ### 2. 設定をする
 
+**WindowsとmacOSでは、同梱されているKompresiConfigure(KompresiConfigure.exe)を使用して、画面上で簡単に設定と起動ができます。**
+
 ターミナル(コマンドプロンプト)を開いて、kompresi(kompresi.exe)をドラックアンドドロップなどして起動します。
 すると、おそらくセットアップガイドが英語で表示されます。
 

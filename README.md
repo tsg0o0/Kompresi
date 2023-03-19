@@ -27,6 +27,8 @@ Download the latest version [here](https://github.com/tsg0o0/Kompresi/releases).
 
 ### 2. Complete the configuration
 
+**For Windows and macOS, the included KompresiConfigure (KompresiConfigure.exe) allows for easy on-screen configuration and startup. **
+
 Open a terminal (command prompt) and run kompresi (kompresi.exe).
 You will probably see a setup guide.
 
