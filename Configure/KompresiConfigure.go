@@ -214,6 +214,7 @@ func main() {
 	})
 
 	//window
+	w.Resize(fyne.NewSize(712, 500))
 	w.SetContent(container.NewVBox(
 		widget.NewLabel("Input Directory:"),
 		inputDir,
