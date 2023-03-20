@@ -33,9 +33,6 @@ func main() {
 		fmt.Println("", err, "")
 	}
 	exedir = filepath.Dir(exedir)
-	if runtime.GOOS == "darwin" {
-		exedir = strings.Replace(exedir, "/KompresiConfigure.app/Contents/MacOS", "", 1)
-	}
 	
 	//load cnfig.json
 	config, err := readConfig(exedir + "/config.json")
@@ -163,10 +160,8 @@ func main() {
 		cmd := exec.Command("kompresi")
 		if runtime.GOOS == "darwin" {
 			cmd = exec.Command(exedir + "/kompresi")
-		}else if runtime.GOOS == "linux" {
-			cmd = exec.Command(exedir + "/kompresi")
 		}else if runtime.GOOS == "windows" {
-			cmd = exec.Command(exedir + "/kompresi.exe daemon")
+			cmd = exec.Command("cmd.exe", "/c", exedir + "/kompresi.exe", "daemon")
 		}else{
 			fmt.Println("Fatal error: This operating system could not be recognized.")
 		}
