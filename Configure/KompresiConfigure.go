@@ -98,7 +98,11 @@ func main() {
         dialog := dialog.NewFolderOpen(func(selected fyne.ListableURI, err error) {
             if err == nil {
             	if selected != nil {
-                	inputDir.SetText(selected.Path())
+            		if runtime.GOOS == "windows" {
+            			inputDir.SetText(strings.Replace(selected.Path(), "/", "\\", -1))
+            		}else{
+                		inputDir.SetText(selected.Path())
+                	}
                 }
             } else {
                 dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
@@ -111,7 +115,11 @@ func main() {
         dialog := dialog.NewFolderOpen(func(selected fyne.ListableURI, err error) {
             if err == nil {
             	if selected != nil {
-                	outputDir.SetText(selected.Path())
+            		if runtime.GOOS == "windows" {
+            			outputDir.SetText(strings.Replace(selected.Path(), "/", "\\", -1))
+            		}else{
+                		outputDir.SetText(selected.Path())
+                	}
                 }
             } else {
                 dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
