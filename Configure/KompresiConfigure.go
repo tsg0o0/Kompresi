@@ -83,6 +83,8 @@ func main() {
 			dialog.ShowError(fmt.Errorf("Input Directory is not entered."), w)
 		}else if outputDir.Text == "" {
 			dialog.ShowError(fmt.Errorf("Output Directory is not entered."), w)
+		}else if outputDir.Text == inputDir.Text {
+			dialog.ShowError(fmt.Errorf("Input Directory and Output Directory cannot be the same."), w)
 		}else{
 			//output config.json
 			err := writeConfig(exedir + "/config.json", config)
@@ -153,6 +155,8 @@ func main() {
 			dialog.ShowError(fmt.Errorf("Input Directory is not entered."), w)
 		}else if outputDir.Text == "" {
 			dialog.ShowError(fmt.Errorf("Output Directory is not entered."), w)
+		}else if outputDir.Text == inputDir.Text {
+			dialog.ShowError(fmt.Errorf("Input Directory and Output Directory cannot be the same."), w)
 		}else{
 			//output config.json
 			err := writeConfig(exedir + "/config.json", config)
