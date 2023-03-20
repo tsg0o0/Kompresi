@@ -392,7 +392,7 @@ func pngCompress(inputFile string) {
 			}
 		}
 		resultInfo, err := os.Stat(outputFile)
-		if err != nil {
+		if err == nil {
 			fmt.Println("Success. (by zopfli)")
 			fmt.Println("Original file size:", originalInfo.Size())
 			fmt.Println("Result file size:", resultInfo.Size())
@@ -445,7 +445,7 @@ func jpegCompress(inputFile string) {
 			}
 		}
 		resultInfo, err := os.Stat(outputFile)
-		if err != nil {
+		if err == nil {
 			fmt.Println("Success. (by guetzli)")
 			fmt.Println("Original file size:", originalInfo.Size())
 			fmt.Println("Result file size:", resultInfo.Size())
