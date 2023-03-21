@@ -4,10 +4,6 @@
 
 Go application that compresses PNG and JPEG images in folders in the background with no degradation.
 
-**This application is still in alpha testing.
-In particular, I do not have a lot of development knowledge about Windows.
-Any assistance is welcome!**
-
 ## What can this do?
 
 Monitors the specified directory and compresses any detected image files losslessly.
