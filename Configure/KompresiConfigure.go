@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"runtime"
 	"encoding/json"
@@ -9,7 +8,6 @@ import (
 	"strings"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -130,126 +128,6 @@ func main() {
         dialog.Show()
         dialog.Resize(fyne.NewSize(1400, 1400))
     })
-	
-	//RUN
-	logWin := a.NewWindow("Kompresi Daemon")
-    text := widget.NewTextGrid()
-    text.ShowWhitespace = true
-    txScroll := container.NewScroll(text)
-	runButton := widget.NewButton("Run", func() {
-		config.InputDir = inputDir.Text
-		config.OutputDir = outputDir.Text
-		config.DeleteOrigin = deleteOrigin.Checked
-		if optimLv.Selected == "Fast but low compression" {
-			optimLvInt = 0
-		}else if optimLv.Selected == "Auto" {
-			optimLvInt = 1
-		}else if optimLv.Selected == "Slow but high compression" {
-			optimLvInt = 2
-		}else{
-			optimLvInt = 1
-		}
-		config.OptimLv = optimLvInt
-		
-		if inputDir.Text == "" {
-			dialog.ShowError(fmt.Errorf("Input Directory is not entered."), w)
-		}else if outputDir.Text == "" {
-			dialog.ShowError(fmt.Errorf("Output Directory is not entered."), w)
-		}else if outputDir.Text == inputDir.Text {
-			dialog.ShowError(fmt.Errorf("Input Directory and Output Directory cannot be the same."), w)
-		}else{
-			//output config.json
-			err := writeConfig(exedir + "/config.json", config)
-			if err != nil {
-				dialog.ShowError(fmt.Errorf("Failed to save."), w)
-			}else{
-				
-				
-		
-		exedir, _ := os.Executable()
-		exedir = filepath.Dir(exedir)
-		
-		cmd := exec.Command("kompresi")
-		if runtime.GOOS == "darwin" {
-			cmd = exec.Command(exedir + "/kompresi")
-		}else if runtime.GOOS == "windows" {
-			cmd = exec.Command("cmd.exe", "/c", exedir + "/kompresi.exe", "daemon")
-		}else{
-			fmt.Println("Fatal error: This operating system could not be recognized.")
-		}
-		
-		outPipe, err := cmd.StdoutPipe()
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
-
-        errPipe, err := cmd.StderrPipe()
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
-
-        go func() {
-            outScanner := bufio.NewScanner(outPipe)
-            for outScanner.Scan() {
-                text.SetText(text.Text() + "\n " + outScanner.Text())
-                txScroll.ScrollToBottom()
-            }
-
-            errScanner := bufio.NewScanner(errPipe)
-            for errScanner.Scan() {
-                text.SetText(text.Text() + "\n " + errScanner.Text())
-                txScroll.ScrollToBottom()
-            }
-        }()
-
-        exeerr := cmd.Start()
-        if exeerr != nil {
-        	dialog.ShowError(fmt.Errorf("Could not start the application."), w)
-            fmt.Println(exeerr)
-            return
-        }
-
-        go func() {
-            cmd.Wait()
-            execErr := cmd.Run()
-            if execErr != nil {
-                fmt.Println(execErr)
-                return
-            }
-        }()
-    
-        //exit
-        stopButton := widget.NewButton("Stop", func() {
-        	killErr := cmd.Process.Kill()
-            if killErr != nil {
-                fmt.Println(killErr)
-            }
-            os.Exit(0)
-    	})
-        
-        header := container.NewGridWithColumns(2, widget.NewLabel("Kompresi"), stopButton)
-        header.Resize(fyne.NewSize(700, 30))
-        txScroll.Resize(fyne.NewSize(700, 452))
-        txScroll.Move(fyne.NewPos(0, 36))
-    	view := container.NewWithoutLayout(header, txScroll)
-        
-        logWin.SetCloseIntercept(func() {
-            killErr := cmd.Process.Kill()
-            if killErr != nil {
-                fmt.Println(killErr)
-            }
-            os.Exit(0)
-        })
-		
-        logWin.SetContent(view)
-        logWin.Resize(fyne.NewSize(712, 500))
-        logWin.Show()
-        w.Close()
-        
-      }}
-	})
 
 	//window
 	w.Resize(fyne.NewSize(712, -1))
@@ -264,7 +142,6 @@ func main() {
 		widget.NewLabel("Optimize Level:"),
 		optimLv,
 		saveButton,
-		runButton,
 	))
 	w.ShowAndRun()
 }
