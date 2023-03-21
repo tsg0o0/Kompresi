@@ -8,13 +8,15 @@ mkdir -p Build/linux/resources/
 # macOS
 cp Resources/config.json Build/mac/config.json
 cp -r Resources/resources/mac/ Build/mac/resources/mac/
+mkdir Build/mac/KompresiConfigure.app/
+cp -r Resources/KonpresiConfigure.app/ Build/mac/KompresiConfigure.app/
 cd Main/
 GOOS=darwin GOARCH=amd64 go build kompresi.go
 cp kompresi ../Build/mac/kompresi
 rm kompresi
 cd ../Configure/
 GOOS=darwin GOARCH=amd64 go build KompresiConfigure.go
-cp KompresiConfigure ../Build/mac/KompresiConfigure
+cp KompresiConfigure ../Build/mac/KompresiConfigure.app/Contents/MacOS/KompresiConfigure
 rm -r KompresiConfigure
 cd ../
 
