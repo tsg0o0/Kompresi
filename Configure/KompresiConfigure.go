@@ -34,16 +34,24 @@ func main() {
 	if runtime.GOOS == "darwin" {
 		exedir = strings.Replace(exedir, "/KompresiConfigure.app/Contents/MacOS", "", 1)
 	}
-	
-	//load cnfig.json
-	config, err := readConfig(exedir + "/config.json")
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	//make app
 	a := app.New()
 	w := a.NewWindow("Kompresi Configure")
+	
+	//load cnfig.json
+	config, err := readConfig(exedir + "/config.json")
+	if err != nil {
+		exitButton := widget.NewButton("Exit", func() {
+			log.Fatal(err)
+		})
+		w.SetContent(container.NewVBox(
+			widget.NewLabel("Error"),
+			widget.NewLabel("Could not read configuration file."),
+			exitButton,
+		))
+		w.ShowAndRun()
+	}
 	
 	//widgets
 	inputDir := widget.NewEntry()
@@ -90,7 +98,7 @@ func main() {
 			//output config.json
 			err := writeConfig(exedir + "/config.json", config)
 			if err != nil {
-				dialog.ShowError(fmt.Errorf("Failed to save."), w)
+				dialog.ShowError(fmt.Errorf("Failed to save.\n", err), w)
 			}else{
 				dialog.ShowInformation("Saved!", "Setup is complete.", w)
 			}
@@ -108,7 +116,7 @@ func main() {
                 	}
                 }
             } else {
-                dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
+                dialog.ShowError(fmt.Errorf("Could not retrieve the folder.\n", err), w)
             }
         }, w)
         dialog.Show()
@@ -125,7 +133,7 @@ func main() {
                 	}
                 }
             } else {
-                dialog.ShowError(fmt.Errorf("Could not retrieve the folder."), w)
+                dialog.ShowError(fmt.Errorf("Could not retrieve the folder.\n", err), w)
             }
         }, w)
         dialog.Show()
